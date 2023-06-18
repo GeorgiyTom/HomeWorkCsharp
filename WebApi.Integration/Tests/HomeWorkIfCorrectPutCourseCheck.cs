@@ -39,7 +39,7 @@ namespace WebApi.Integration.Tests
 
             //Assert
             Assert.Equal(HttpStatusCode.OK, response);
-           
+            //RPRY получить курс и проверить что поля изменились
         }
     }
 }

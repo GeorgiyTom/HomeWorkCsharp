@@ -50,12 +50,15 @@ public class CourseService
             return HttpStatusCode.BadRequest;
         else if (courseModel.Name.Equals(null))
             return HttpStatusCode.BadRequest;
+        //RPRY все выше в теле метода удалить
         await AddCourseInternalAsync(courseModel, cookie);
         return HttpStatusCode.OK;
     }
 
-    public async Task<HttpStatusCode> PutCourse(int Id, CourseModel courseModel, string cookie = null)
+    //RPRY мена параметров начинаются с малых букв
+    public async Task<HttpStatusCode> PutCourse(int Id, CourseModel courseModel, string cookie = null) //RPRY: к асинхронным методам добавляется Async
     {
+        //RPRY этого тут не нужно. Метод должен не проверять, а совершать действие редактирования
         CourseModel oldCourse = await _applicationHttpClient.GetDeserializeCourseAsync(Id, cookie);
         if (oldCourse.Price == courseModel.Price || oldCourse.Name == courseModel.Name) //Если что-то не изменилось в новом курсе, то выбрасываем ошибку
             return HttpStatusCode.BadRequest;
@@ -63,15 +66,15 @@ public class CourseService
         return HttpStatusCode.OK;
     }
 
-    public async Task<bool> DeleteCourse(int Id, CourseModel courseModel, string cookie = null)
+    public async Task<bool> DeleteCourse(int Id, CourseModel courseModel, string cookie = null) //RPRY аргумент courseModel удалить
     {
         try
         {
-            await _applicationHttpClient.DeleteCourseAsync(Id); // Удаляем курс
-            courseModel.Deleted = true;
+            await _applicationHttpClient.DeleteCourseAsync(Id); // Удаляем курс //RPRY передать куки
+            courseModel.Deleted = true; //RPRY удалить эту строку
             return courseModel.Deleted;
         } 
-        catch
+        catch //RPRY try-catch не нужен
         {
             return false;
         }

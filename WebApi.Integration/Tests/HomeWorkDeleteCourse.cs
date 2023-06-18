@@ -25,13 +25,14 @@ namespace WebApi.Integration.Tests
         {
             //Act
             int newCourseId = await _courseService.CreateRandomCourseAsync();
-            CourseModel course = await _courseApiClient.GetDeserializeCourseAsync(newCourseId);
+            CourseModel course = await _courseApiClient.GetDeserializeCourseAsync(newCourseId); //RPRY: не нужно
 
             //Arrange
             bool resultOfDelete = await _courseService.DeleteCourse(newCourseId, course);
 
             //Assert
             Assert.True(resultOfDelete);
+            //RPRY Получить курс по идентификатору и проверить, что поле isDeleted = true;
         }
     }
 }

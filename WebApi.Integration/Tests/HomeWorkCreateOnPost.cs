@@ -37,7 +37,10 @@ namespace WebApi.Integration.Tests
             //Assert
             Assert.Equal(HttpStatusCode.OK, resultOfCreate); //Проверка, что статус OK
 
+            //RPRY: нужно также проверять что сущность создана, получив ее по идентификатору 
         }
+        
+        //RPRY: не хватает негативных тестов
         
     }
 }

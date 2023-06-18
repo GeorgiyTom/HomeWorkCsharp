@@ -19,13 +19,14 @@ namespace WebApi.Integration.Tests
         }
 
         [Fact]
-        public async Task CheckReturn() 
+        public async Task CheckReturn() //RPRY: название должно быть осмысленным. Здесь и в остальных тестах 
         {
             //Arrange
             var name = Guid.NewGuid().ToString();
             var password = Guid.NewGuid().ToString();
 
             //Act
+            //RPRY: зачем два одинаковых вызова? Нужно получить authResponse, затем оттуда вытащить куки
             var authResponse = await _cookieToken.GetCookieInternalAsync(name, password);
             var cookie = await _cookieToken.GetCookieAsync(name, password);
 
@@ -37,5 +38,7 @@ namespace WebApi.Integration.Tests
             Assert.True(isTrue);
             Assert.NotNull(cookie);
         }
+        
+        //RPRY: не хватает негативных тестов
     }
 }

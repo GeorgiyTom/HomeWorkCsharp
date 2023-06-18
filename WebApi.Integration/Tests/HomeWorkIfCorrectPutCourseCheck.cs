@@ -12,13 +12,13 @@ namespace WebApi.Integration.Tests
 {
     public class HomeWorkIfCorrectPutCourseCheck
     {
-        private readonly CookieService _cookieToken;
+        private readonly string _cookieToken;
         private readonly CourseService _courseService;
         private readonly CourseApiClient _courseApiClient;
         Random rnd = new Random();
         public HomeWorkIfCorrectPutCourseCheck(TestFixture testFixture)
         {
-            _cookieToken = new CookieService();
+            _cookieToken = testFixture.AuthCookie;
             _courseService = new CourseService();
             _courseApiClient = new CourseApiClient();
         }
@@ -35,10 +35,13 @@ namespace WebApi.Integration.Tests
             };
 
             //Act
-            HttpStatusCode response = await _courseService.PutCourse(newCourseId, course);
+            CourseModel oldCourse = await _courseApiClient.GetDeserializeCourseAsync(newCourseId, _cookieToken); //Получаем старый курс
+            HttpResponseMessage response = await _courseService.PutCourse(newCourseId, course); //Меняем поля
+            CourseModel newCourse = await _courseApiClient.GetDeserializeCourseAsync(newCourseId, _cookieToken); //Получаем измененный курс
 
             //Assert
-            Assert.Equal(HttpStatusCode.OK, response);
+            Assert.NotEqual(oldCourse.Price, newCourse.Price);
+            Assert.NotEqual(oldCourse.Name, newCourse.Name);
             //RPRY получить курс и проверить что поля изменились
         }
     }

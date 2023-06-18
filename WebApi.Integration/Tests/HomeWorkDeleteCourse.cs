@@ -14,8 +14,10 @@ namespace WebApi.Integration.Tests
     {
         private readonly CourseService _courseService;
         private readonly CourseApiClient _courseApiClient;
+        private readonly string _cookie;
         public HomeWorkDeleteCourse(TestFixture testFixture)
         {
+            _cookie = testFixture.AuthCookie;
             _courseService = new CourseService();
             _courseApiClient = new CourseApiClient();
         }
@@ -25,13 +27,12 @@ namespace WebApi.Integration.Tests
         {
             //Act
             int newCourseId = await _courseService.CreateRandomCourseAsync();
-            CourseModel course = await _courseApiClient.GetDeserializeCourseAsync(newCourseId); //RPRY: не нужно
 
             //Arrange
-            bool resultOfDelete = await _courseService.DeleteCourse(newCourseId, course);
-
+            HttpResponseMessage resultOfDelete = await _courseService.DeleteCourse(newCourseId, _cookie);
+            CourseModel course = await _courseApiClient.GetDeserializeCourseAsync(newCourseId, _cookie);
             //Assert
-            Assert.True(resultOfDelete);
+            Assert.True(course.Deleted);
             //RPRY Получить курс по идентификатору и проверить, что поле isDeleted = true;
         }
     }

@@ -15,10 +15,12 @@ namespace WebApi.Integration.Tests
     {
         private readonly string _cookie;
         private readonly CourseService _courseService;
+        private readonly CourseApiClient _courseApiClient;
         public HomeWorkCreateOnPost(TestFixture testFixture)
         {
             _cookie = testFixture.AuthCookie;
             _courseService = new CourseService();
+            _courseApiClient = new CourseApiClient();
         }
 
         [Fact]
@@ -32,12 +34,14 @@ namespace WebApi.Integration.Tests
             };
 
             //Act
-            HttpStatusCode resultOfCreate = await _courseService.PostCourse(courseModel);
-
+            int idOfCourse = await _courseService.PostCourse(courseModel, _cookie);
+            CourseModel course = await _courseApiClient.GetDeserializeCourseAsync(idOfCourse, _cookie);
             //Assert
-            Assert.Equal(HttpStatusCode.OK, resultOfCreate); //Проверка, что статус OK
+            Assert.NotNull(course); //Проверка, что курс создан
 
-            //RPRY: нужно также проверять что сущность создана, получив ее по идентификатору 
+            Assert.NotEqual(0, course.Price);
+            Assert.Null(course.Name);
+
         }
         
         //RPRY: не хватает негативных тестов

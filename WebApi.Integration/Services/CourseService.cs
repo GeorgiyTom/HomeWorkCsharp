@@ -46,38 +46,18 @@ public class CourseService
 
     public async Task<HttpStatusCode> PostCourse(AddCourseModel courseModel, string cookie = null) //Добавленный метод для создания курса
     {
-        if (courseModel.Price == 0)
-            return HttpStatusCode.BadRequest;
-        else if (courseModel.Name.Equals(null))
-            return HttpStatusCode.BadRequest;
-        //RPRY все выше в теле метода удалить
         await AddCourseInternalAsync(courseModel, cookie);
         return HttpStatusCode.OK;
     }
 
-    //RPRY мена параметров начинаются с малых букв
-    public async Task<HttpStatusCode> PutCourse(int Id, CourseModel courseModel, string cookie = null) //RPRY: к асинхронным методам добавляется Async
+    public async Task<HttpResponseMessage> PutCourse(int id, CourseModel courseModel, string cookie = null) //RPRY: к асинхронным методам добавляется Async
     {
-        //RPRY этого тут не нужно. Метод должен не проверять, а совершать действие редактирования
-        CourseModel oldCourse = await _applicationHttpClient.GetDeserializeCourseAsync(Id, cookie);
-        if (oldCourse.Price == courseModel.Price || oldCourse.Name == courseModel.Name) //Если что-то не изменилось в новом курсе, то выбрасываем ошибку
-            return HttpStatusCode.BadRequest;
-        await _applicationHttpClient.EditCourseAsync(Id, courseModel, cookie);
-        return HttpStatusCode.OK;
+        return await _applicationHttpClient.EditCourseAsync(id, courseModel, cookie);
     }
 
-    public async Task<bool> DeleteCourse(int Id, CourseModel courseModel, string cookie = null) //RPRY аргумент courseModel удалить
-    {
-        try
-        {
-            await _applicationHttpClient.DeleteCourseAsync(Id); // Удаляем курс //RPRY передать куки
-            courseModel.Deleted = true; //RPRY удалить эту строку
-            return courseModel.Deleted;
-        } 
-        catch //RPRY try-catch не нужен
-        {
-            return false;
-        }
+    public async Task<HttpResponseMessage> DeleteCourse(int id, string cookie = null)
+    { 
+        return await _applicationHttpClient.DeleteCourseAsync(id, cookie); 
     }
 
 }

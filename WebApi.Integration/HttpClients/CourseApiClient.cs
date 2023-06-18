@@ -58,8 +58,10 @@ public class CourseApiClient
         return await _httpClient.PutAsJsonAsync($"{_baseUri}/course/{id}", courseModel);
     }
 
-    public async Task<HttpResponseMessage> DeleteCourseAsync(int id) //передать куки
+    public async Task<HttpResponseMessage> DeleteCourseAsync(int id, string cookie = null) //передать куки
     {
+        var course = await GetDeserializeCourseAsync(id, cookie);
+        course.Deleted = true;
         return await _httpClient.DeleteAsync($"{_baseUri}/course/{id}");
     }
 }

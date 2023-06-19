@@ -27,24 +27,29 @@ namespace WebApi.Integration.Tests
         public async Task CheckPriceAndNotNullNameForPostCourse()
         {
             //Arrange 
-            var courseModel = new AddCourseModel
-            {
-                Name = Guid.NewGuid().ToString(),
-                Price = 15
-            };
+            var correctCourseModel = new AddCourseModel { Name = Guid.NewGuid().ToString(), Price = 15 };
+
+            var courseModelWithErrorPrice = new AddCourseModel { Name = Guid.NewGuid().ToString(), Price = 0 };
+
+            var courseModelWithErrorName = new AddCourseModel { Name = null, Price = 20 };
 
             //Act
-            int idOfCourse = await _courseService.PostCourse(courseModel, _cookie);
+            int idOfCourse = await _courseService.PostCourse(correctCourseModel, _cookie);
             CourseModel course = await _courseApiClient.GetDeserializeCourseAsync(idOfCourse, _cookie);
+
+            int idOfCourseWithErrorPrice = await _courseService.PostCourse(courseModelWithErrorPrice, _cookie);
+            CourseModel courseWithError1 = await _courseApiClient.GetDeserializeCourseAsync(idOfCourseWithErrorPrice, _cookie);
+
+            int idOfCourseWithErrorName = await _courseService.PostCourse(courseModelWithErrorName, _cookie);
+            CourseModel courseWithError2 = await _courseApiClient.GetDeserializeCourseAsync(id, _cookie);
             //Assert
             Assert.NotNull(course); //Проверка, что курс создан
+            Assert.Null(courseWithError1);
+            Assert.Null(courseWithError2); 
 
-            Assert.NotEqual(0, course.Price);
-            Assert.Null(course.Name);
+            
 
         }
-        
-        //RPRY: не хватает негативных тестов
         
     }
 }

@@ -26,22 +26,27 @@ namespace WebApi.Integration.Tests
         public async Task CheckIsReturnTrueAndNotNullCookies() //RPRY: название должно быть осмысленным. Здесь и в остальных тестах 
         {
             //Arrange
-            var name = Guid.NewGuid().ToString();
-            var password = Guid.NewGuid().ToString();
+            var name1 = Guid.NewGuid().ToString();
+            var password1 = Guid.NewGuid().ToString();
+
+            string errorName = null;
+            var password2 = Guid.NewGuid().ToString();
+
+            var name2 = Guid.NewGuid().ToString();
+            string errorPassword = null;
 
             //Act
-            var authResponse = await _cookieToken.GetCookieInternalAsync(name, password);
-            IEnumerable<string> cookies = authResponse.Headers.SingleOrDefault(header => header.Key == "Set-Cookie").Value;
+            string cookie1 = await _cookieToken.GetCookieAsync(name1, password1);
+
+            string cookie2 = await _cookieToken.GetCookieAsync(errorName, password2);
+
+            string cookie3 = await _cookieToken.GetCookieAsync(name2, errorPassword);
 
             //Assert
-            Assert.Equal(HttpStatusCode.OK, authResponse.StatusCode);
-            string data = await authResponse.Content.ReadAsStringAsync(); //Получаем данные с сервера
-            //output.WriteLine(data);
-            bool isTrue = Convert.ToBoolean(data);
-            Assert.True(isTrue);
-            Assert.NotNull(cookies);
+            Assert.NotNull(cookie1);
+            Assert.Null(cookie2)
+            Assert.Null(cookie3)
         }
-        
-        //RPRY: не хватает негативных тестов
+       
     }
 }
